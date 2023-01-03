@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pandas
+loguru
+sqlalchemy[asyncio]
+psycopg2-binary
+asyncpg
