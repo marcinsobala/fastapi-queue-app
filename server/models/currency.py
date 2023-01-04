@@ -20,3 +20,7 @@ class Currency(CurrencyIn):
 class CurrencyUpd(BaseModel):
     name: str | None
     acronym: str | None = Field(None, max_length=3)
+
+
+class CurrencyQuery(CurrencyUpd):
+    ...

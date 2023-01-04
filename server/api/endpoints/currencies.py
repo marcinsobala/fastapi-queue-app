@@ -8,10 +8,9 @@ from loguru import logger
 
 from adapters.data_access_layer.currencies import (
     AbstractCurrenciesDAL,
-    CurrencyAlreadyExists,
-    ResourceDoesNotExist,
     # CurrencyIsUsedInTransfer,
 )
+from exceptions import CurrencyAlreadyExists, ResourceDoesNotExist
 from api.dependencies import get_currencies_dal
 from models import currency as model
 
@@ -33,12 +32,10 @@ async def get_currency(
 
 @router.get("/")
 async def get_all_currencies(
-    acronym: str | None = Query(None, max_length=3),
+    query_params: model.CurrencyQuery = Depends(),
     currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
 ):
-    filters = {}
-    if acronym is not None:
-        filters["acronym"] = acronym
+    filters = query_params.dict(excude_none=True)
     return await currencies_dal.get_currencies(filters)
 
 

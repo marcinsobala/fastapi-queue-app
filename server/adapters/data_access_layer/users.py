@@ -9,14 +9,7 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
 from adapters.database import UserDb
-
-
-class UserAlreadyExists(Exception):
-    pass
-
-
-class ResourceDoesNotExist(Exception):
-    pass
+from exceptions import UserAlreadyExists, ResourceDoesNotExist
 
 
 class AbstractUsersDAL(ABC):
@@ -52,7 +45,7 @@ class UsersDAL(AbstractUsersDAL):
         return user
 
     async def get_users(self, filters: dict[str, Any] | None = None):
-        users = await self.session.execute(select(UserDb))
+        users = await self.session.execute(select(UserDb).filter_by(**filters or {}))
         return users.scalars().all()
 
     async def create_user(self, create_data: dict[str, Any]):
@@ -66,8 +59,12 @@ class UsersDAL(AbstractUsersDAL):
 
     async def update_user(self, user_id: int, update_data: dict[str, Any]):
         user = await self.get_user(user_id)
-        for key, value in update_data.items():
-            setattr(user, key, value)
+        try:
+            for key, value in update_data.items():
+                setattr(user, key, value)
+            await self.session.flush()
+        except IntegrityError:
+            raise UserAlreadyExists(f"User with following data: {update_data} already exists!")
 
     async def delete_user(self, user_id: int):
         q = delete(UserDb).where(UserDb.id == user_id)

@@ -19,3 +19,8 @@ class UserUpd(BaseModel):
     name: str | None
     surname: str | None
     premium: bool | None
+    email: str | None
+
+
+class UserQuery(UserUpd):
+    ...

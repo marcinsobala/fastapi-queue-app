@@ -1,6 +1,6 @@
 from uvicorn import run
 
-from server.main import app
+from main import app
 
 
 if __name__ == '__main__':

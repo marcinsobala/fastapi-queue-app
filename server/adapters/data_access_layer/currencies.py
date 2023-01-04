@@ -9,14 +9,7 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
 from adapters.database import CurrencyDb
-
-
-class CurrencyAlreadyExists(Exception):
-    pass
-
-
-class ResourceDoesNotExist(Exception):
-    pass
+from exceptions import CurrencyAlreadyExists, ResourceDoesNotExist
 
 
 class AbstractCurrenciesDAL(ABC):
