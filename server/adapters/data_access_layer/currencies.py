@@ -41,7 +41,7 @@ class CurrenciesDAL(AbstractCurrenciesDAL):
     async def get_currency(self, currency_id: int):
         currency = await self.session.get(CurrencyDb, currency_id)
         if currency is None:
-            raise ResourceDoesNotExist(f"Currency with id: {currency_id} not found")
+            raise ResourceDoesNotExist
         return currency
 
     async def get_currencies(self, filters: dict[str, Any] | None = None):

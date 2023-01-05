@@ -41,7 +41,7 @@ class UsersDAL(AbstractUsersDAL):
     async def get_user(self, user_id: int):
         user = await self.session.get(UserDb, user_id)
         if user is None:
-            raise ResourceDoesNotExist(f"User with id {user_id} not found")
+            raise ResourceDoesNotExist
         return user
 
     async def get_users(self, filters: dict[str, Any] | None = None):

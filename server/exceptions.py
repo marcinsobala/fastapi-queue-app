@@ -5,6 +5,9 @@ class ResourceDoesNotExist(Exception):
 class TransferAlreadyExists(Exception):
     pass
 
+class CurrencyOrUserDoesNotExist(Exception):
+    pass
+
 
 class CurrencyAlreadyExists(Exception):
     pass

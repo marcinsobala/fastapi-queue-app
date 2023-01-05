@@ -19,7 +19,14 @@ class TransferIn(TransferBase):
     user_id: PositiveInt
 
 
-class Transfer(TransferBase):
+class Transfer(TransferIn):
+    id: PositiveInt
+
+    class Config:
+        orm_mode = True
+
+
+class TransferDetail(TransferBase):
     id: PositiveInt
     currency: Currency
     user: User

@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from adapters.database import (
     TransferDb,
 )
-from exceptions import TransferAlreadyExists, ResourceDoesNotExist
+from exceptions import CurrencyOrUserDoesNotExist, ResourceDoesNotExist
 
 
 class AbstractTransfersDAL(ABC):
@@ -43,7 +43,7 @@ class TransfersDAL(AbstractTransfersDAL):
     async def get_transfer(self, transfer_id: int):
         transfer = await self.session.get(TransferDb, transfer_id)
         if transfer is None:
-            raise ResourceDoesNotExist(f"Currency with id: {transfer_id} not found")
+            raise ResourceDoesNotExist
         return transfer
 
     async def get_transfers(self, filters: dict[str, Any] | None = None):
@@ -52,11 +52,8 @@ class TransfersDAL(AbstractTransfersDAL):
 
     async def create_transfer(self, create_data: dict[str, Any]):
         new_transfer = TransferDb(**create_data)
-        try:
-            self.session.add(new_transfer)
-            await self.session.flush()
-        except IntegrityError:
-            raise ResourceDoesNotExist(f"Provided user and/or currency does not exist")
+        self.session.add(new_transfer)
+        await self.session.flush()
         return new_transfer
 
     async def update_transfer(self, transfer_id: int, update_data: dict[str, Any]):
@@ -66,7 +63,7 @@ class TransfersDAL(AbstractTransfersDAL):
                 setattr(transfer, key, value)
             await self.session.flush()
         except IntegrityError:
-            raise TransferAlreadyExists(f"Transfer with data: {update_data} already exists")
+            raise CurrencyOrUserDoesNotExist
 
     async def delete_transfer(self, transfer_id: int):
         # forbid if transfer is used in transfer
@@ -74,4 +71,4 @@ class TransfersDAL(AbstractTransfersDAL):
         q = delete(TransferDb).where(TransferDb.id == transfer_id)
         delete_operation = await self.session.execute(q)
         if delete_operation.rowcount is 0:
-            raise ResourceDoesNotExist(f"User with id {transfer_id} not found")
+            raise ResourceDoesNotExist

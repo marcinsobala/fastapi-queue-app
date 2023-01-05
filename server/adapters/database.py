@@ -43,9 +43,6 @@ class TransferDb(Base):
     currency_id = Column(Integer, ForeignKey("currency.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    currency = relationship("CurrencyDb")
-    user = relationship("UserDb")
-
 
 class CurrencyDb(Base):
     __tablename__ = 'currency'
