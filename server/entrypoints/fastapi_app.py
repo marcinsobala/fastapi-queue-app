@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from uvicorn import run
 
-from api.routing import global_router
+from entrypoints.api.routing import global_router
 from adapters.database import create_tables
 
 
@@ -24,7 +24,7 @@ app = create_app()
 
 if __name__ == '__main__':
     run(
-        "main:app",
+        "entrypoints.fastapi_app:app",
         host="0.0.0.0",
         port=8080,
         reload=True,

@@ -6,7 +6,7 @@ from fastapi import (
 from loguru import logger
 
 
-from api.dependencies import (
+from entrypoints.api.dependencies import (
     get_users_dal,
     get_currencies_dal,
     get_transfers_dal

@@ -5,14 +5,10 @@ from fastapi import (
 )
 from loguru import logger
 
-from adapters.data_access_layer.users import (
-    AbstractUsersDAL,
-    ResourceDoesNotExist,
-)
-from exceptions import UserAlreadyExists
-from api.dependencies import get_users_dal
+from adapters.data_access_layer.users import AbstractUsersDAL
+from entrypoints.api.dependencies import get_users_dal
+from exceptions import ResourceAlreadyExists, ResourceDoesNotExist
 from models import user as model
-
 
 router = APIRouter()
 
@@ -45,9 +41,10 @@ async def create_user(
 ) -> model.User:
     try:
         return await users_dal.create_user(user.dict())
-    except UserAlreadyExists as ex:
-        logger.exception(str(ex))
-        raise HTTPException(409, str(ex))
+    except ResourceAlreadyExists:
+        msg = f"User with email: {user.email} already exists!"
+        logger.exception(msg)
+        raise HTTPException(409, msg)
 
 
 @router.patch("/{user_id}")
@@ -61,9 +58,10 @@ async def update_user(
     except ResourceDoesNotExist as ex:
         logger.exception(str(ex))
         raise HTTPException(404, str(ex))
-    except UserAlreadyExists as ex:
-        logger.exception(str(ex))
-        raise HTTPException(409, str(ex))
+    except ResourceAlreadyExists:
+        msg = f"User with following data: {user_upd} already exists!"
+        logger.exception(msg)
+        raise HTTPException(409, msg)
 
     return await users_dal.get_user(user_id)
 
@@ -78,7 +76,7 @@ async def delete_user(
 ):
     try:
         await users_dal.delete_user(user_id)
-    except ResourceDoesNotExist as ex:
-        logger.exception(str(ex))
-        raise HTTPException(404, str(ex))
-
+    except ResourceDoesNotExist:
+        msg = f"User with id {user_id} not found"
+        logger.exception(msg)
+        raise HTTPException(404, msg)

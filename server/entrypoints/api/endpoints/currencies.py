@@ -2,16 +2,16 @@ from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
-    Query,
 )
 from loguru import logger
 
-from adapters.data_access_layer.currencies import (
-    AbstractCurrenciesDAL,
-    # CurrencyIsUsedInTransfer,
+from adapters.data_access_layer.currencies import AbstractCurrenciesDAL
+from exceptions import (
+    CurrencyIsUsedInTransfer,
+    ResourceAlreadyExists,
+    ResourceDoesNotExist,
 )
-from exceptions import CurrencyAlreadyExists, ResourceDoesNotExist
-from api.dependencies import get_currencies_dal
+from entrypoints.api.dependencies import get_currencies_dal
 from models import currency as model
 
 
@@ -35,7 +35,7 @@ async def get_all_currencies(
     query_params: model.CurrencyQuery = Depends(),
     currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
 ):
-    filters = query_params.dict(excude_none=True)
+    filters = query_params.dict(exclude_none=True)
     return await currencies_dal.get_currencies(filters)
 
 
@@ -46,9 +46,10 @@ async def create_currency(
 ) -> model.Currency:
     try:
         return await currencies_dal.create_currency(currency.dict())
-    except CurrencyAlreadyExists as ex:
-        logger.exception(str(ex))
-        raise HTTPException(409, str(ex))
+    except ResourceAlreadyExists:
+        msg = f"Currency: {currency.acronym} already exists!"
+        logger.exception(msg)
+        raise HTTPException(409, msg)
 
 
 @router.patch("/{currency_id}")
@@ -59,12 +60,14 @@ async def update_currency(
 ) -> model.Currency:
     try:
         await currencies_dal.update_currency(currency_id, currency_upd.dict(exclude_unset=True))
-    except ResourceDoesNotExist as ex:
-        logger.exception(str(ex))
-        raise HTTPException(404, str(ex))
-    except CurrencyAlreadyExists as ex:
-        logger.exception(str(ex))
-        raise HTTPException(409, str(ex))
+    except ResourceDoesNotExist:
+        msg = f"Currency with id {currency_id} not found"
+        logger.exception(msg)
+        raise HTTPException(404, msg)
+    except ResourceAlreadyExists:
+        msg = f"Currency with data: {currency_upd} already exists"
+        logger.exception(msg)
+        raise HTTPException(409, msg)
 
     return await currencies_dal.get_currency(currency_id)
 
@@ -79,9 +82,11 @@ async def delete_currency(
 ):
     try:
         await currencies_dal.delete_currency(currency_id)
-    # except CurrencyIsUsedInTransfer as ex:
-    #     logger.exception(str(ex))
-    #     raise HTTPException(403, str(ex))
-    except ResourceDoesNotExist as ex:
-        logger.exception(str(ex))
-        raise HTTPException(404, str(ex))
+    except CurrencyIsUsedInTransfer:
+        msg = f"Cannot delete currency with id: {currency_id} as it is used in existing transfers."
+        logger.exception(msg)
+        raise HTTPException(403, msg)
+    except ResourceDoesNotExist:
+        msg = f"Currency with id {currency_id} not found"
+        logger.exception(msg)
+        raise HTTPException(404, msg)

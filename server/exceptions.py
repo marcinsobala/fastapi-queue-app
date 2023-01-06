@@ -2,8 +2,13 @@ class ResourceDoesNotExist(Exception):
     pass
 
 
-class TransferAlreadyExists(Exception):
+class ResourceAlreadyExists(Exception):
     pass
+
+
+class CurrencyIsUsedInTransfer(Exception):
+    pass
+
 
 class CurrencyOrUserDoesNotExist(Exception):
     pass
@@ -15,3 +20,4 @@ class CurrencyAlreadyExists(Exception):
 
 class UserAlreadyExists(Exception):
     pass
+

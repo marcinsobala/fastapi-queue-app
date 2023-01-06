@@ -66,8 +66,6 @@ class TransfersDAL(AbstractTransfersDAL):
             raise CurrencyOrUserDoesNotExist
 
     async def delete_transfer(self, transfer_id: int):
-        # forbid if transfer is used in transfer
-
         q = delete(TransferDb).where(TransferDb.id == transfer_id)
         delete_operation = await self.session.execute(q)
         if delete_operation.rowcount is 0:

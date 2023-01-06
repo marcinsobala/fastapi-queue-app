@@ -1,6 +1,6 @@
 from uvicorn import run
 
-from main import app
+from fastapi_app import app
 
 
 if __name__ == '__main__':

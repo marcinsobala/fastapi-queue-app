@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
-from adapters.database import UserDb
-from exceptions import UserAlreadyExists, ResourceDoesNotExist
+from adapters.database import UserDb, TransferDb
+from exceptions import ResourceAlreadyExists, ResourceDoesNotExist
 
 
 class AbstractUsersDAL(ABC):
@@ -54,7 +54,7 @@ class UsersDAL(AbstractUsersDAL):
             self.session.add(new_user)
             await self.session.flush()
         except IntegrityError:
-            raise UserAlreadyExists(f"User with email: {new_user.email} already exists!")
+            raise ResourceAlreadyExists
         return new_user
 
     async def update_user(self, user_id: int, update_data: dict[str, Any]):
@@ -64,10 +64,10 @@ class UsersDAL(AbstractUsersDAL):
                 setattr(user, key, value)
             await self.session.flush()
         except IntegrityError:
-            raise UserAlreadyExists(f"User with following data: {update_data} already exists!")
+            raise ResourceAlreadyExists
 
     async def delete_user(self, user_id: int):
-        q = delete(UserDb).where(UserDb.id == user_id)
-        delete_operation = await self.session.execute(q)
-        if delete_operation.rowcount is 0:
-            raise ResourceDoesNotExist(f"User with id {user_id} not found")
+        await self.session.execute(delete(TransferDb).where(TransferDb.user_id == user_id))
+        result = await self.session.execute(delete(UserDb).where(UserDb.id == user_id))
+        if result.rowcount is 0:
+            raise ResourceDoesNotExist

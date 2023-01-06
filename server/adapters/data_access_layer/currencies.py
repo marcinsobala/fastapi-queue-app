@@ -9,7 +9,11 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
 from adapters.database import CurrencyDb
-from exceptions import CurrencyAlreadyExists, ResourceDoesNotExist
+from exceptions import (
+    CurrencyIsUsedInTransfer,
+    ResourceAlreadyExists,
+    ResourceDoesNotExist,
+)
 
 
 class AbstractCurrenciesDAL(ABC):
@@ -54,7 +58,7 @@ class CurrenciesDAL(AbstractCurrenciesDAL):
             self.session.add(new_currency)
             await self.session.flush()
         except IntegrityError:
-            raise CurrencyAlreadyExists(f"Currency: {new_currency.acronym} already exists!")
+            raise ResourceAlreadyExists
         return new_currency
 
     async def update_currency(self, currency_id: int, update_data: dict[str, Any]):
@@ -64,12 +68,13 @@ class CurrenciesDAL(AbstractCurrenciesDAL):
                 setattr(currency, key, value)
             await self.session.flush()
         except IntegrityError:
-            raise CurrencyAlreadyExists(f"Currency with data: {update_data} already exists")
+            raise ResourceAlreadyExists
 
     async def delete_currency(self, currency_id: int):
-        # forbid if currency is used in transfer
-
         q = delete(CurrencyDb).where(CurrencyDb.id == currency_id)
-        delete_operation = await self.session.execute(q)
+        try:
+            delete_operation = await self.session.execute(q)
+        except IntegrityError:
+            raise CurrencyIsUsedInTransfer
         if delete_operation.rowcount is 0:
-            raise ResourceDoesNotExist(f"User with id {currency_id} not found")
+            raise ResourceDoesNotExist
