@@ -1,19 +1,17 @@
+from adapters.data_access_layer.currencies import AbstractCurrenciesDAL
+from entrypoints.api.dependencies import get_currencies_dal
+from exceptions import (
+    CurrencyIsUsedInTransfer,
+    ResourceAlreadyExists,
+    ResourceDoesNotExist,
+)
 from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
 )
 from loguru import logger
-
-from adapters.data_access_layer.currencies import AbstractCurrenciesDAL
-from exceptions import (
-    CurrencyIsUsedInTransfer,
-    ResourceAlreadyExists,
-    ResourceDoesNotExist,
-)
-from entrypoints.api.dependencies import get_currencies_dal
 from models import currency as model
-
 
 router = APIRouter()
 
@@ -21,7 +19,7 @@ router = APIRouter()
 @router.get("/{currency_id}")
 async def get_currency(
     currency_id: int,
-    currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal)
+    currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
 ) -> model.Currency:
     try:
         return await currencies_dal.get_currency(currency_id)

@@ -1,15 +1,21 @@
-from abc import ABC, abstractmethod
-from typing import (
-    Any,
+from abc import (
+    ABC,
+    abstractmethod,
 )
+from typing import Any
 
+from adapters.database import (
+    TransferDb,
+    UserDb,
+)
+from exceptions import (
+    ResourceAlreadyExists,
+    ResourceDoesNotExist,
+)
 from sqlalchemy import delete
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.exc import IntegrityError
-
-from adapters.database import UserDb, TransferDb
-from exceptions import ResourceAlreadyExists, ResourceDoesNotExist
 
 
 class AbstractUsersDAL(ABC):
@@ -69,5 +75,5 @@ class UsersDAL(AbstractUsersDAL):
     async def delete_user(self, user_id: int):
         await self.session.execute(delete(TransferDb).where(TransferDb.user_id == user_id))
         result = await self.session.execute(delete(UserDb).where(UserDb.id == user_id))
-        if result.rowcount is 0:
+        if result.rowcount == 0:
             raise ResourceDoesNotExist

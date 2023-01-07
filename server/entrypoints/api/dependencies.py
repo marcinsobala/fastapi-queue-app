@@ -1,11 +1,9 @@
-from typing import AsyncGenerator
-
-
-from adapters.database import async_session
+from collections.abc import AsyncGenerator
 
 from adapters.data_access_layer.currencies import CurrenciesDAL
 from adapters.data_access_layer.transfers import TransfersDAL
 from adapters.data_access_layer.users import UsersDAL
+from adapters.database import async_session
 
 
 async def get_users_dal() -> AsyncGenerator[UsersDAL, None]:

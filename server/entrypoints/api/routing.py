@@ -1,5 +1,9 @@
+from entrypoints.api.endpoints import (
+    currencies,
+    transfers,
+    users,
+)
 from fastapi import APIRouter
-from entrypoints.api.endpoints import users, currencies, transfers
 
 global_router = APIRouter()
 

@@ -20,4 +20,3 @@ class CurrencyAlreadyExists(Exception):
 
 class UserAlreadyExists(Exception):
     pass
-

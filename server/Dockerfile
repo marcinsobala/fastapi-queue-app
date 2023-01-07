@@ -7,7 +7,7 @@ RUN apt-get update  && \
 
 RUN pip install --upgrade pip
 
-COPY requirements.txt ./
+COPY requirements.in ./
 RUN pip install -r ./requirements.txt && \
     rm -rf ./requirements.txt
 

@@ -1,4 +1,7 @@
-from pydantic import BaseModel, PositiveInt
+from pydantic import (
+    BaseModel,
+    PositiveInt,
+)
 
 
 class UserIn(BaseModel):

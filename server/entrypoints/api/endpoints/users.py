@@ -1,13 +1,15 @@
+from adapters.data_access_layer.users import AbstractUsersDAL
+from entrypoints.api.dependencies import get_users_dal
+from exceptions import (
+    ResourceAlreadyExists,
+    ResourceDoesNotExist,
+)
 from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
 )
 from loguru import logger
-
-from adapters.data_access_layer.users import AbstractUsersDAL
-from entrypoints.api.dependencies import get_users_dal
-from exceptions import ResourceAlreadyExists, ResourceDoesNotExist
 from models import user as model
 
 router = APIRouter()
@@ -16,19 +18,19 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_user(
     user_id: int,
-    users_dal: AbstractUsersDAL = Depends(get_users_dal)
+    users_dal: AbstractUsersDAL = Depends(get_users_dal),
 ) -> model.User:
     try:
         return await users_dal.get_user(user_id)
     except ResourceDoesNotExist as ex:
         logger.exception(str(ex))
         raise HTTPException(404, str(ex))
-    
-    
+
+
 @router.get("/")
 async def get_all_users(
     query_params: model.UserQuery = Depends(),
-    users_dal: AbstractUsersDAL = Depends(get_users_dal)
+    users_dal: AbstractUsersDAL = Depends(get_users_dal),
 ) -> list[model.User]:
     filters = query_params.dict(exclude_none=True)
     return await users_dal.get_users(filters)

@@ -1,10 +1,15 @@
-from datetime import date, time
+from datetime import (
+    date,
+    time,
+)
 from decimal import Decimal
 
-from pydantic import BaseModel, PositiveInt
-
-from models.user import User
 from models.currency import Currency
+from models.user import User
+from pydantic import (
+    BaseModel,
+    PositiveInt,
+)
 
 
 class TransferBase(BaseModel):

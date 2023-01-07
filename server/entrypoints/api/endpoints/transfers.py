@@ -1,20 +1,21 @@
+from adapters.data_access_layer.currencies import AbstractCurrenciesDAL
+from adapters.data_access_layer.transfers import AbstractTransfersDAL
+from adapters.data_access_layer.users import AbstractUsersDAL
+from entrypoints.api.dependencies import (
+    get_currencies_dal,
+    get_transfers_dal,
+    get_users_dal,
+)
+from exceptions import (
+    CurrencyOrUserDoesNotExist,
+    ResourceDoesNotExist,
+)
 from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
 )
 from loguru import logger
-
-
-from entrypoints.api.dependencies import (
-    get_users_dal,
-    get_currencies_dal,
-    get_transfers_dal
-)
-from adapters.data_access_layer.users import AbstractUsersDAL
-from adapters.data_access_layer.currencies import AbstractCurrenciesDAL
-from adapters.data_access_layer.transfers import AbstractTransfersDAL
-from exceptions import CurrencyOrUserDoesNotExist, ResourceDoesNotExist
 from models import transfer as model
 
 router = APIRouter()
@@ -64,17 +65,14 @@ async def get(
     return model.TransferDetail(
         **transfer_db.__dict__,
         currency=await _get_currency(transfer_db.currency_id, currencies_dal),
-        user=await _get_user(transfer_db.user_id, users_dal)
+        user=await _get_user(transfer_db.user_id, users_dal),
     )
 
 
-@router.get(
-    "/",
-    response_model=list[model.Transfer]
-)
+@router.get("/", response_model=list[model.Transfer])
 async def get_all_transfers(
     query_params: model.TransferQuery = Depends(),
-    transfers_dal: AbstractTransfersDAL = Depends(get_transfers_dal)
+    transfers_dal: AbstractTransfersDAL = Depends(get_transfers_dal),
 ) -> list[model.Transfer]:
     filters = query_params.dict(exclude_none=True)
     return await transfers_dal.get_transfers(filters)
@@ -118,7 +116,7 @@ async def update_transfer(
             msg += f"\t- User with id: {u_id}"
         logger.exception(msg)
         raise HTTPException(404, msg)
-    
+
     return await transfers_dal.get_transfer(transfer_id)
 
 

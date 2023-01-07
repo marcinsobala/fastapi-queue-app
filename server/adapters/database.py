@@ -1,29 +1,32 @@
+import config
 from sqlalchemy import (
+    DECIMAL,
+    Boolean,
     Column,
+    Date,
+    ForeignKey,
     Integer,
     String,
     Time,
-    Date,
-    DECIMAL,
-    Boolean,
-    ForeignKey,
 )
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    create_async_engine,
+)
+from sqlalchemy.ext.declarative import (
+    DeclarativeMeta,
+    declarative_base,
+)
 from sqlalchemy.orm import sessionmaker
-
-import config
-
 
 engine = create_async_engine(config.SQLALCHEMY_DATABASE_URI, future=True)
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
 
 
 class UserDb(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(), nullable=False)
@@ -33,7 +36,7 @@ class UserDb(Base):
 
 
 class TransferDb(Base):
-    __tablename__ = 'transfers'
+    __tablename__ = "transfers"
 
     id = Column(Integer, primary_key=True, nullable=False)
     amount = Column(DECIMAL(), nullable=False)
@@ -45,7 +48,7 @@ class TransferDb(Base):
 
 
 class CurrencyDb(Base):
-    __tablename__ = 'currency'
+    __tablename__ = "currency"
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(length=30), nullable=False)

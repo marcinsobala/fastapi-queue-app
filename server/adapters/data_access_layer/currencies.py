@@ -1,12 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import (
-    Any,
+from abc import (
+    ABC,
+    abstractmethod,
 )
-
-from sqlalchemy import delete
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy.exc import IntegrityError
+from typing import Any
 
 from adapters.database import CurrencyDb
 from exceptions import (
@@ -14,6 +10,10 @@ from exceptions import (
     ResourceAlreadyExists,
     ResourceDoesNotExist,
 )
+from sqlalchemy import delete
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 
 class AbstractCurrenciesDAL(ABC):
@@ -76,5 +76,5 @@ class CurrenciesDAL(AbstractCurrenciesDAL):
             delete_operation = await self.session.execute(q)
         except IntegrityError:
             raise CurrencyIsUsedInTransfer
-        if delete_operation.rowcount is 0:
+        if delete_operation.rowcount == 0:
             raise ResourceDoesNotExist

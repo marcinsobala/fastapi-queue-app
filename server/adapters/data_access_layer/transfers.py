@@ -1,17 +1,18 @@
-from abc import ABC, abstractmethod
-from typing import (
-    Any,
+from abc import (
+    ABC,
+    abstractmethod,
 )
+from typing import Any
 
+from adapters.database import TransferDb
+from exceptions import (
+    CurrencyOrUserDoesNotExist,
+    ResourceDoesNotExist,
+)
 from sqlalchemy import delete
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.exc import IntegrityError
-
-from adapters.database import (
-    TransferDb,
-)
-from exceptions import CurrencyOrUserDoesNotExist, ResourceDoesNotExist
 
 
 class AbstractTransfersDAL(ABC):
@@ -68,5 +69,5 @@ class TransfersDAL(AbstractTransfersDAL):
     async def delete_transfer(self, transfer_id: int):
         q = delete(TransferDb).where(TransferDb.id == transfer_id)
         delete_operation = await self.session.execute(q)
-        if delete_operation.rowcount is 0:
+        if delete_operation.rowcount == 0:
             raise ResourceDoesNotExist
