@@ -1,13 +1,12 @@
 import config
 from sqlalchemy import (
     DECIMAL,
+    TIMESTAMP,
     Boolean,
     Column,
-    Date,
     ForeignKey,
     Integer,
     String,
-    Time,
 )
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -41,8 +40,7 @@ class TransferDb(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     amount = Column(DECIMAL(), nullable=False)
     title = Column(String(length=85), nullable=False)
-    day = Column(Date(), nullable=False)
-    time = Column(Time(), nullable=False)
+    timestamp = Column(TIMESTAMP(timezone=True), nullable=False)
     currency_id = Column(Integer, ForeignKey("currency.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
 

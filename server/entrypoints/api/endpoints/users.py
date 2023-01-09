@@ -15,19 +15,26 @@ from models import user as model
 router = APIRouter()
 
 
-@router.get("/{user_id}")
+@router.get(
+    "/{user_id}",
+    response_model=model.User,
+)
 async def get_user(
     user_id: int,
     users_dal: AbstractUsersDAL = Depends(get_users_dal),
 ) -> model.User:
     try:
         return await users_dal.get_user(user_id)
-    except ResourceDoesNotExist as ex:
-        logger.exception(str(ex))
-        raise HTTPException(404, str(ex))
+    except ResourceDoesNotExist:
+        msg = f"User with id: {user_id} does not exist"
+        logger.exception(msg)
+        raise HTTPException(404, msg)
 
 
-@router.get("/")
+@router.get(
+    "/",
+    response_model=list[model.User],
+)
 async def get_all_users(
     query_params: model.UserQuery = Depends(),
     users_dal: AbstractUsersDAL = Depends(get_users_dal),
@@ -36,7 +43,10 @@ async def get_all_users(
     return await users_dal.get_users(filters)
 
 
-@router.post("/")
+@router.post(
+    "/",
+    response_model=model.User,
+)
 async def create_user(
     user: model.UserIn,
     users_dal: AbstractUsersDAL = Depends(get_users_dal),
@@ -49,7 +59,10 @@ async def create_user(
         raise HTTPException(409, msg)
 
 
-@router.patch("/{user_id}")
+@router.patch(
+    "/{user_id}",
+    response_model=model.User,
+)
 async def update_user(
     user_id: int,
     user_upd: model.UserUpd,

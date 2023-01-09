@@ -69,7 +69,10 @@ async def get(
     )
 
 
-@router.get("/", response_model=list[model.Transfer])
+@router.get(
+    "/",
+    response_model=list[model.Transfer],
+)
 async def get_all_transfers(
     query_params: model.TransferQuery = Depends(),
     transfers_dal: AbstractTransfersDAL = Depends(get_transfers_dal),
@@ -109,11 +112,7 @@ async def update_transfer(
         logger.exception(msg)
         raise HTTPException(404, msg)
     except CurrencyOrUserDoesNotExist:
-        msg = "Following resources do not exist: \n"
-        if (c_id := transfer_upd.currency_id) is not None:
-            msg += f"\t- Currency with id: {c_id} \n"
-        if (u_id := transfer_upd.user_id) is not None:
-            msg += f"\t- User with id: {u_id}"
+        msg = "Provided currency or user do not exist"
         logger.exception(msg)
         raise HTTPException(404, msg)
 

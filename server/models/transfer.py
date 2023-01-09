@@ -1,13 +1,11 @@
-from datetime import (
-    date,
-    time,
-)
+from datetime import datetime
 from decimal import Decimal
 
 from models.currency import Currency
 from models.user import User
 from pydantic import (
     BaseModel,
+    Field,
     PositiveInt,
 )
 
@@ -15,8 +13,7 @@ from pydantic import (
 class TransferBase(BaseModel):
     amount: Decimal
     title: str
-    day: date
-    time: time
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
 class TransferIn(TransferBase):
@@ -40,8 +37,6 @@ class TransferDetail(TransferBase):
 class TransferUpd(BaseModel):
     amount: Decimal | None
     title: str | None
-    day: date | None
-    time: time | None
     currency_id: PositiveInt | None
     user_id: PositiveInt | None
 

@@ -16,28 +16,38 @@ from models import currency as model
 router = APIRouter()
 
 
-@router.get("/{currency_id}")
+@router.get(
+    "/{currency_id}",
+    response_model=model.Currency,
+)
 async def get_currency(
     currency_id: int,
     currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
 ) -> model.Currency:
     try:
         return await currencies_dal.get_currency(currency_id)
-    except ResourceDoesNotExist as ex:
-        logger.exception(str(ex))
-        raise HTTPException(404, str(ex))
+    except ResourceDoesNotExist:
+        msg = f"Currency with id: {currency_id} does not exist"
+        logger.exception(msg)
+        raise HTTPException(404, msg)
 
 
-@router.get("/")
+@router.get(
+    "/",
+    response_model=list[model.Currency],
+)
 async def get_all_currencies(
     query_params: model.CurrencyQuery = Depends(),
     currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
-):
+) -> list[model.Currency]:
     filters = query_params.dict(exclude_none=True)
     return await currencies_dal.get_currencies(filters)
 
 
-@router.post("/")
+@router.post(
+    "/",
+    response_model=model.Currency,
+)
 async def create_currency(
     currency: model.CurrencyIn,
     currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
@@ -50,7 +60,10 @@ async def create_currency(
         raise HTTPException(409, msg)
 
 
-@router.patch("/{currency_id}")
+@router.patch(
+    "/{currency_id}",
+    response_model=model.Currency,
+)
 async def update_currency(
     currency_id: int,
     currency_upd: model.CurrencyUpd,
