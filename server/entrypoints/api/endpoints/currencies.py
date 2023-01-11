@@ -90,7 +90,7 @@ async def update_currency(
 async def delete_currency(
     currency_id: int,
     currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
-):
+) -> None:
     try:
         await currencies_dal.delete_currency(currency_id)
     except CurrencyIsUsedInTransfer:

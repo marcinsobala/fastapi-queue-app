@@ -4,15 +4,15 @@ from fastapi import FastAPI
 from uvicorn import run
 
 
-def create_app():
+def create_app() -> FastAPI:
     app = FastAPI()
 
     @app.get("/")
-    def home():
+    def home() -> str:
         return "Hello, world!"
 
     @app.on_event("startup")
-    async def startup():
+    async def startup() -> None:
         await create_tables()
 
     app.include_router(global_router)

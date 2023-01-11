@@ -70,9 +70,10 @@ async def update_user(
 ) -> model.User:
     try:
         await users_dal.update_user(user_id, user_upd.dict(exclude_unset=True))
-    except ResourceDoesNotExist as ex:
-        logger.exception(str(ex))
-        raise HTTPException(404, str(ex))
+    except ResourceDoesNotExist:
+        msg = f"User with id: {user_id} does not exist"
+        logger.exception(msg)
+        raise HTTPException(404, msg)
     except ResourceAlreadyExists:
         msg = f"User with following data: {user_upd} already exists!"
         logger.exception(msg)
@@ -88,7 +89,7 @@ async def update_user(
 async def delete_user(
     user_id: int,
     users_dal: AbstractUsersDAL = Depends(get_users_dal),
-):
+) -> None:
     try:
         await users_dal.delete_user(user_id)
     except ResourceDoesNotExist:

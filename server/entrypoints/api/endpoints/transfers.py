@@ -1,6 +1,10 @@
 from adapters.data_access_layer.currencies import AbstractCurrenciesDAL
 from adapters.data_access_layer.transfers import AbstractTransfersDAL
 from adapters.data_access_layer.users import AbstractUsersDAL
+from adapters.database import (
+    CurrencyDb,
+    UserDb,
+)
 from entrypoints.api.dependencies import (
     get_currencies_dal,
     get_transfers_dal,
@@ -24,7 +28,7 @@ router = APIRouter()
 async def _get_currency(
     currency_id: int,
     currencies_dal: AbstractCurrenciesDAL,
-):
+) -> CurrencyDb:
     try:
         return await currencies_dal.get_currency(currency_id)
     except ResourceDoesNotExist:
@@ -36,7 +40,7 @@ async def _get_currency(
 async def _get_user(
     user_id: int,
     users_dal: AbstractUsersDAL,
-):
+) -> UserDb:
     try:
         return await users_dal.get_user(user_id)
     except ResourceDoesNotExist:
@@ -126,7 +130,7 @@ async def update_transfer(
 async def delete_transfer(
     transfer_id: int,
     transfers_dal: AbstractTransfersDAL = Depends(get_transfers_dal),
-):
+) -> None:
     try:
         return await transfers_dal.delete_transfer(transfer_id)
     except ResourceDoesNotExist:

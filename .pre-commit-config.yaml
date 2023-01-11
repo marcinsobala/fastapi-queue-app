@@ -65,7 +65,7 @@ repos:
         --ignore-missing-imports,
         --install-types,
         --non-interactive,
-        --check-untyped-defs,
+        --disallow-untyped-defs,
         ]
         additional_dependencies:
           - pydantic
