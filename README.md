@@ -25,3 +25,19 @@ example:
 - display running containers
 - access db container to issue queries directly in SQL
 Complete list of actions can be viewed after typing `just` in the terminal
+
+
+### Local development
+- install **pyenv** - https://github.com/pyenv/pyenv
+- create virtual environment with python version specified in **server/Dockerfile**
+```commandline
+pyenv install 3.11.2
+pyenv virtualenv 3.11.2 my_venv
+pyenv activate my_venv
+pyenv local my_venv
+```
+Last command will create **.python-version** file in the project root, which will
+automatically activate the virtual environment when you navigate to the project root.
+- Navigate to project root and issue `just dev-env` to install packages and `pre-commit` hooks
+- Use `just pre-commit` to run linters manually and compile **requirements.txt** file
+from **requirements.in** file

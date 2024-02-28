@@ -1,4 +1,4 @@
-from adapters.data_access_layer.users import AbstractUsersDAL
+from adapters.repositories.users import AbstractUsersDAL
 from entrypoints.api.dependencies import get_users_dal
 from exceptions import (
     ResourceAlreadyExists,

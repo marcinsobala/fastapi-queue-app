@@ -1,10 +1,10 @@
-from adapters.data_access_layer.currencies import AbstractCurrenciesDAL
-from adapters.data_access_layer.transfers import AbstractTransfersDAL
-from adapters.data_access_layer.users import AbstractUsersDAL
 from adapters.database import (
     CurrencyDb,
     UserDb,
 )
+from adapters.repositories.currency import ICurrencyRepository
+from adapters.repositories.transfers import AbstractTransfersDAL
+from adapters.repositories.users import AbstractUsersDAL
 from entrypoints.api.dependencies import (
     get_currencies_dal,
     get_transfers_dal,
@@ -27,7 +27,7 @@ router = APIRouter()
 
 async def _get_currency(
     currency_id: int,
-    currencies_dal: AbstractCurrenciesDAL,
+    currencies_dal: ICurrencyRepository,
 ) -> CurrencyDb:
     try:
         return await currencies_dal.get_currency(currency_id)
@@ -55,7 +55,7 @@ async def _get_user(
 )
 async def get(
     transfer_id: int,
-    currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
+    currencies_dal: ICurrencyRepository = Depends(get_currencies_dal),
     transfers_dal: AbstractTransfersDAL = Depends(get_transfers_dal),
     users_dal: AbstractUsersDAL = Depends(get_users_dal),
 ) -> model.TransferDetail:
@@ -91,7 +91,7 @@ async def get_all_transfers(
 )
 async def create_transfer(
     transfer: model.TransferIn,
-    currencies_dal: AbstractCurrenciesDAL = Depends(get_currencies_dal),
+    currencies_dal: ICurrencyRepository = Depends(get_currencies_dal),
     transfers_dal: AbstractTransfersDAL = Depends(get_transfers_dal),
     users_dal: AbstractUsersDAL = Depends(get_users_dal),
 ) -> model.Transfer:

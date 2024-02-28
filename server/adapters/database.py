@@ -1,59 +1,43 @@
 import config
-from sqlalchemy import (
-    DECIMAL,
-    TIMESTAMP,
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
+from sqlalchemy import (  # DECIMAL,; TIMESTAMP,; Boolean,; ForeignKey,; Column,; Integer,; String,
+    create_engine,
 )
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    create_async_engine,
-)
-from sqlalchemy.ext.declarative import (
-    DeclarativeMeta,
+from sqlalchemy.orm import (
+    Session,
     declarative_base,
+    sessionmaker,
 )
-from sqlalchemy.orm import sessionmaker
 
-engine = create_async_engine(config.SQLALCHEMY_DATABASE_URI, future=True)
-async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-
-Base: DeclarativeMeta = declarative_base()
+engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
 
 
-class UserDb(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String(), nullable=False)
-    email = Column(String(), nullable=False, unique=True)
-    surname = Column(String(), nullable=False)
-    premium = Column(Boolean(), nullable=False, default=False)
+def session_factory() -> Session:
+    return sessionmaker(bind=engine)()
 
 
-class TransferDb(Base):
-    __tablename__ = "transfers"
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    amount = Column(DECIMAL(), nullable=False)
-    title = Column(String(length=85), nullable=False)
-    timestamp = Column(TIMESTAMP(timezone=True), nullable=False)
-    currency_id = Column(Integer, ForeignKey("currency.id"))
-    user_id = Column(Integer, ForeignKey("users.id"))
+Base = declarative_base()
 
 
-class CurrencyDb(Base):
-    __tablename__ = "currency"
+# class UserDb(Base):
+#     __tablename__ = "users"
+#
+#     id = Column(Integer, primary_key=True, nullable=False)
+#     name = Column(String(), nullable=False)
+#     email = Column(String(), nullable=False, unique=True)
+#     surname = Column(String(), nullable=False)
+#     premium = Column(Boolean(), nullable=False, default=False)
+#
+#
+# class TransferDb(Base):
+#     __tablename__ = "transfers"
+#
+#     id = Column(Integer, primary_key=True, nullable=False)
+#     amount = Column(DECIMAL(), nullable=False)
+#     title = Column(String(length=85), nullable=False)
+#     timestamp = Column(TIMESTAMP(timezone=True), nullable=False)
+#     currency_id = Column(Integer, ForeignKey("currency.id"))
+#     user_id = Column(Integer, ForeignKey("users.id"))
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String(length=30), nullable=False)
-    acronym = Column(String(length=3), nullable=False, unique=True)
 
-
-async def create_tables() -> None:
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
+def create_tables() -> None:
+    Base.metadata.create_all(engine)

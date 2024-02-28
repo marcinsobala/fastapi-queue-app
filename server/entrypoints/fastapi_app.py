@@ -5,18 +5,18 @@ from uvicorn import run
 
 
 def create_app() -> FastAPI:
-    app = FastAPI()
+    fastapi_app = FastAPI()
 
-    @app.get("/")
+    @fastapi_app.get("/")
     def home() -> str:
-        return "Hello, world!"
+        return "Hello, worlds!"
 
-    @app.on_event("startup")
-    async def startup() -> None:
-        await create_tables()
+    @fastapi_app.on_event("startup")
+    def startup() -> None:
+        create_tables()
 
-    app.include_router(global_router)
-    return app
+    fastapi_app.include_router(global_router)
+    return fastapi_app
 
 
 app = create_app()
@@ -26,5 +26,4 @@ if __name__ == "__main__":
         "entrypoints.fastapi_app:app",
         host="0.0.0.0",
         port=8080,
-        reload=True,
     )

@@ -12,6 +12,11 @@ containers_table_format := "table {{.ID}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}"
 default:
     just --list
 
+dev-env:
+    pip install -r server/requirements.txt
+    pip install -r server/requirements-dev.txt
+    pre-commit install
+
 pre-commit:
 	pre-commit run --all-files
 
@@ -22,7 +27,7 @@ up:
 	docker-compose {{compose_files}} up -d
 
 down:
-	docker-compose down --remove-orphans
+	docker-compose down
 
 logs *args='':
 	{{docker_compose}} logs {{args}}
@@ -35,6 +40,9 @@ db-console:
 
 stop-api:
     docker stop api
+
+restart-api:
+    docker restart api
 
 show-containers:
     docker ps --format "{{containers_table_format}}"
