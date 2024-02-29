@@ -2,7 +2,8 @@
 
 ### Prerequisites
 - Install **docker** and **docker-compose** - https://docs.docker.com/compose/install/
-- Install **justfile** support - https://github.com/casey/just
+<br> Verify installation by issuing `docker --version` and `docker-compose --version` in the terminal
+- Install **justfile** support - https://github.com/casey/just (**brew** package manager handles this well)
 
 ### Quickstart
 - Navigate to project root and issue following commands

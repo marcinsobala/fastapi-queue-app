@@ -4,3 +4,4 @@ loguru
 sqlalchemy
 psycopg2-binary
 celery
+redis

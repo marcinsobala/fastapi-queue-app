@@ -47,6 +47,9 @@ restart-api:
 show-containers:
     docker ps --format "{{containers_table_format}}"
 
-echo-postgres-ip:
+echo-ip:
     #!/usr/bin/env bash
     echo POSTGRES_SERVER=$({{docker_inspect_ip}} pgdb)
+    echo FLOWER_SERVER=$({{docker_inspect_ip}} flower)
+    echo RABBITMQ_SERVER=$({{docker_inspect_ip}} rabbitmq)
+    echo REDIS_SERVER=$({{docker_inspect_ip}} redis)

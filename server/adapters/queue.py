@@ -22,7 +22,7 @@ celery_app = Celery(
 )
 
 celery_app.conf.task_routes = {
-    "entrypoints.worker.log_msg": "default-queue",
+    "dude_task": "default-queue",
 }
 
 
@@ -34,7 +34,7 @@ class IQueueAdapter(ABC):
         ...
 
     @abstractmethod
-    def get_task(self, task_id: str) -> dict:
+    def get_task_result(self, task_id: str) -> dict:
         ...
 
 
@@ -45,5 +45,5 @@ class QueueAdapter(IQueueAdapter):
             kwargs=kwargs,
         ).id
 
-    def get_task(self, task_id: str) -> dict:
-        return self.app.AsyncResult(task_id).info
+    def get_task_result(self, task_id: str) -> dict:
+        return self.app.AsyncResult(task_id).result

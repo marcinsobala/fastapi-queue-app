@@ -1,6 +1,10 @@
 from contextlib import contextmanager
 
 from adapters.database import session_factory
+from adapters.queue import (
+    IQueueAdapter,
+    QueueAdapter,
+)
 from adapters.repositories.currency import (
     CurrencyRepository,
     ICurrencyRepository,
@@ -8,11 +12,6 @@ from adapters.repositories.currency import (
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-
-# async def get_users_dal() -> AsyncGenerator[UsersDAL, None]:
-#     async with async_session() as session:
-#         async with session.begin():
-#             yield UsersDAL(session)
 
 
 @contextmanager
@@ -32,13 +31,5 @@ def currency_repository() -> ICurrencyRepository:
         yield CurrencyRepository(db_session=db_session)
 
 
-# async def get_currencies_dal() -> AsyncGenerator[CurrencyRepository, None]:
-#     async with async_session() as session:
-#         async with session.begin():
-#             yield CurrencyRepository(session)
-
-
-# async def get_transfers_dal() -> AsyncGenerator[TransfersDAL, None]:
-#     async with async_session() as session:
-#         async with session.begin():
-#             yield TransfersDAL(session)
+def queue_adapter() -> IQueueAdapter:
+    return QueueAdapter()

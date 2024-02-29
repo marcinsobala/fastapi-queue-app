@@ -27,12 +27,15 @@ services:
       - ./server:/app
 
   rabbitmq:
-    image: bitnami/rabbitmq
+    image: bitnami/rabbitmq:3.12.13
     container_name: rabbitmq
     restart: always
     env_file: ./server/.env
     volumes:
       - rabbitmd_data:/bitnami
+    ports:
+      - 15672:15672
+      - 5672:5672
 
   redis:
     image: bitnami/redis
@@ -60,7 +63,9 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    command: sh -c "python entrypoints/worker.py"
+    command: sh -c "celery -A entrypoints.worker worker -l info -Q default-queue -c 1"
+    env_file: ./server/.env
+
     restart: on-failure
 
 
