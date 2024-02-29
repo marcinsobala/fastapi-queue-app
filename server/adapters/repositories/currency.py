@@ -5,7 +5,6 @@ from abc import (
 from typing import Any
 
 from exceptions import (
-    CurrencyIsUsedInTransfer,
     ResourceAlreadyExists,
     ResourceDoesNotExist,
 )
@@ -79,9 +78,6 @@ class CurrencyRepository(ICurrencyRepository):
 
     def delete_currency(self, currency_id: int) -> None:
         q = delete(CurrencyDb).where(CurrencyDb.id == currency_id)
-        try:
-            delete_operation = self.session.execute(q)
-        except IntegrityError:
-            raise CurrencyIsUsedInTransfer
+        delete_operation = self.session.execute(q)
         if delete_operation.rowcount == 0:
             raise ResourceDoesNotExist
