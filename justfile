@@ -36,7 +36,7 @@ api-console:
 	docker exec -it api sh
 
 db-console:
-	docker exec -it pgdb psql finpan user
+	docker exec -it pgdb psql postgres user
 
 stop-api:
     docker stop api

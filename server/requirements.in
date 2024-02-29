@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-pandas
 loguru
 sqlalchemy
 psycopg2-binary
+celery

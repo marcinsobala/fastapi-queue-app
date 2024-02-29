@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.7"
 services:
   postgres:
     container_name: pgdb
@@ -25,3 +25,47 @@ services:
     restart: on-failure
     volumes:
       - ./server:/app
+
+  rabbitmq:
+    image: bitnami/rabbitmq
+    container_name: rabbitmq
+    restart: always
+    env_file: ./server/.env
+    volumes:
+      - rabbitmd_data:/bitnami
+
+  redis:
+    image: bitnami/redis
+    container_name: redis
+    restart: always
+    env_file: ./server/.env
+    volumes:
+      - redis_data:/bitnami/redis/data
+
+  flower:
+    image: mher/flower:0.9.5
+    container_name: flower
+    restart: always
+    depends_on:
+      - rabbitmq
+      - redis
+    env_file: ./server/.env
+    command:
+      - "--broker=amqp://rabbit:myrabbitpassword@rabbitmq:5672//"
+
+  worker:
+    container_name: worker
+    depends_on:
+      - flower
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: sh -c "python entrypoints/worker.py"
+    restart: on-failure
+
+
+volumes:
+    rabbitmd_data:
+      driver: local
+    redis_data:
+        driver: local

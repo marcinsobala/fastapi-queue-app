@@ -1,5 +1,5 @@
 from adapters.repositories.currency import ICurrencyRepository
-from entrypoints.api.dependencies import currency_repository
+from api.dependencies import currency_repository
 from exceptions import (
     CurrencyIsUsedInTransfer,
     ResourceAlreadyExists,

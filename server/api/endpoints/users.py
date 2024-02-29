@@ -1,5 +1,5 @@
 from adapters.repositories.users import AbstractUsersDAL
-from entrypoints.api.dependencies import get_users_dal
+from api.dependencies import get_users_dal
 from exceptions import (
     ResourceAlreadyExists,
     ResourceDoesNotExist,

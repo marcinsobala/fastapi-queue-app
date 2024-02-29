@@ -1,5 +1,5 @@
 from adapters.database import create_tables
-from entrypoints.api.routing import global_router
+from api.routing import global_router
 from fastapi import FastAPI
 from uvicorn import run
 

@@ -5,7 +5,7 @@ from adapters.database import (
 from adapters.repositories.currency import ICurrencyRepository
 from adapters.repositories.transfers import AbstractTransfersDAL
 from adapters.repositories.users import AbstractUsersDAL
-from entrypoints.api.dependencies import (
+from api.dependencies import (
     get_currencies_dal,
     get_transfers_dal,
     get_users_dal,

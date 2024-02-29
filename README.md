@@ -1,7 +1,7 @@
-## Example FastAPI backend with asynchronous database access
+## Example FastAPI backend with asynchronous queue
 
 ### Prerequisites
-- Install docker and docker-compose - https://docs.docker.com/compose/install/
+- Install **docker** and **docker-compose** - https://docs.docker.com/compose/install/
 - Install **justfile** support - https://github.com/casey/just
 
 ### Quickstart
