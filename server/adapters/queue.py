@@ -5,6 +5,11 @@ from abc import (
 
 import config
 from celery import Celery
+from exceptions import WrongTaskParamsType
+from models.tasks import (
+    MsgLogger,
+    TaskParams,
+)
 
 celery_app = Celery(
     "worker",
@@ -22,15 +27,25 @@ celery_app = Celery(
 )
 
 celery_app.conf.task_routes = {
-    "dude_task": "default-queue",
+    "default_task": "default-queue",
+}
+
+param_types_by_task_name = {
+    "default_task": MsgLogger,
 }
 
 
 class IQueueAdapter(ABC):
     app = celery_app
 
+    @staticmethod
+    def _validate_task_params(task_name: str, params: TaskParams) -> None:
+        expected_type = param_types_by_task_name.get(task_name)
+        if not isinstance(params, expected_type):
+            raise WrongTaskParamsType(f"Expected {expected_type} as param type")
+
     @abstractmethod
-    def add_task(self, queue_name: str, *args: tuple, **kwargs: dict) -> str:
+    def add_task(self, queue_name: str, params: TaskParams) -> str:
         ...
 
     @abstractmethod
@@ -39,10 +54,12 @@ class IQueueAdapter(ABC):
 
 
 class QueueAdapter(IQueueAdapter):
-    def add_task(self, queue_name: str, *args: tuple, **kwargs: dict) -> str:
+    def add_task(self, task_name: str, params: TaskParams) -> str:
+        self._validate_task_params(task_name, params)
+
         return self.app.send_task(
-            queue_name,
-            kwargs=kwargs,
+            task_name,
+            kwargs=params.__dict__,
         ).id
 
     def get_task_result(self, task_id: str) -> dict:

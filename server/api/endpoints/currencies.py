@@ -1,7 +1,6 @@
 from adapters.repositories.currency import ICurrencyRepository
 from api.dependencies import currency_repository
 from exceptions import (
-    CurrencyIsUsedInTransfer,
     ResourceAlreadyExists,
     ResourceDoesNotExist,
 )
@@ -97,10 +96,6 @@ def delete_currency(
 ) -> None:
     try:
         repo.delete_currency(currency_id)
-    except CurrencyIsUsedInTransfer:
-        msg = f"Cannot delete currency with id: {currency_id} as it is used in existing transfers."
-        logger.exception(msg)
-        raise HTTPException(403, msg)
     except ResourceDoesNotExist:
         msg = f"Currency with id {currency_id} not found"
         logger.exception(msg)

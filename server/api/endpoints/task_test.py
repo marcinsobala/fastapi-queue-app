@@ -4,6 +4,7 @@ from fastapi import (
     APIRouter,
     Depends,
 )
+from models.tasks import MsgLogger
 
 router = APIRouter()
 
@@ -21,5 +22,8 @@ def get_task(
 def schedule_task(
     queue: IQueueAdapter = Depends(queue_adapter),
 ) -> str:
-    task_id = queue.add_task("dude_task", msg="Hello, World!")
+    task_id = queue.add_task(
+        "default_task",
+        MsgLogger(msg="Hello, world!"),
+    )
     return task_id
