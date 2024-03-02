@@ -8,3 +8,7 @@ class ResourceAlreadyExists(Exception):
 
 class WrongTaskParamsType(Exception):
     pass
+
+
+class TaskDoesNotExist(Exception):
+    pass

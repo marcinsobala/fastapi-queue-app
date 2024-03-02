@@ -27,7 +27,7 @@ example:
 - display running containers
 - access db container to issue queries directly in SQL
 - run tests with `just test`. If integration tests fail, just wait half a minute before running them again,
-app needs time to acquire all connections
+app needs time to acquire all connections. Project needs to be `up` for tests to pass.
 Complete list of actions can be viewed after typing `just` in the terminal
 
 

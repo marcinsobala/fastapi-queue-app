@@ -70,5 +70,5 @@ flower-link:
     echo "password: mysecretflower"
 
 
-test: up
+test:
 	docker-compose run --rm --no-deps --entrypoint=pytest api tests/unit tests/integration
