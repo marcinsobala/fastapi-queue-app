@@ -16,6 +16,8 @@ the project with only docker:
 ```
 docker-compose up --build
 ```
+All development commands are stored in `justfile`
+
 The application with interactive API documentation will be available at
 `<docker_container_ip>:8080/docs`.
 The link can be obtained by issuing `just api-link`

@@ -4,6 +4,7 @@ from fastapi import (
     HTTPException,
     Query,
 )
+from fastapi.responses import RedirectResponse
 from loguru import logger
 
 from adapters.queue import IQueueAdapter
@@ -112,3 +113,19 @@ def delete_url(
             raise HTTPException(404, msg)
 
         uow.commit()
+
+
+@router.get("/redirect")
+def redirect_to_url(
+    short_url: str = Query(...),
+    uow: IUnitOfWork = Depends(unit_of_work),
+) -> RedirectResponse:
+    with uow:
+        try:
+            full_url = uow.urls.get_by_short_url(short_url).url
+        except ResourceDoesNotExist:
+            msg = f"Short URL: {short_url} does not exist!"
+            logger.error(msg)
+            raise HTTPException(404, msg)
+
+    return RedirectResponse(url=full_url)
