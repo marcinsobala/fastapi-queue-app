@@ -4,22 +4,42 @@
 #
 #    pip-compile ./server/requirements-dev.in
 #
+certifi==2024.2.2
+    # via requests
 cfgv==3.3.1
     # via pre-commit
+charset-normalizer==3.3.2
+    # via requests
 distlib==0.3.6
     # via virtualenv
 filelock==3.9.0
     # via virtualenv
 identify==2.5.12
     # via pre-commit
+idna==3.4
+    # via
+    #   -c ./server/requirements.txt
+    #   requests
+iniconfig==2.0.0
+    # via pytest
 nodeenv==1.7.0
     # via pre-commit
+packaging==23.2
+    # via pytest
 platformdirs==2.6.2
     # via virtualenv
+pluggy==1.4.0
+    # via pytest
 pre-commit==2.21.0
+    # via -r ./server/requirements-dev.in
+pytest==8.0.2
     # via -r ./server/requirements-dev.in
 pyyaml==6.0
     # via pre-commit
+requests==2.31.0
+    # via -r ./server/requirements-dev.in
+urllib3==2.2.1
+    # via requests
 virtualenv==20.17.1
     # via pre-commit
 

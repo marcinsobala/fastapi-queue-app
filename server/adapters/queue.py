@@ -3,12 +3,13 @@ from abc import (
     abstractmethod,
 )
 
-import config
 from celery import Celery
-from exceptions import WrongTaskParamsType
+
+from core import config
+from core.exceptions import WrongTaskParamsType
 from models.tasks import (
-    MsgLogger,
     TaskParams,
+    UrlShorten,
 )
 
 celery_app = Celery(
@@ -27,17 +28,15 @@ celery_app = Celery(
 )
 
 celery_app.conf.task_routes = {
-    "default_task": "default-queue",
+    "shorten_url": "default-queue",
 }
 
 param_types_by_task_name = {
-    "default_task": MsgLogger,
+    "shorten_url": UrlShorten,
 }
 
 
 class IQueueAdapter(ABC):
-    app = celery_app
-
     @staticmethod
     def _validate_task_params(task_name: str, params: TaskParams) -> None:
         expected_type = param_types_by_task_name.get(task_name)
@@ -57,10 +56,10 @@ class QueueAdapter(IQueueAdapter):
     def add_task(self, task_name: str, params: TaskParams) -> str:
         self._validate_task_params(task_name, params)
 
-        return self.app.send_task(
+        return celery_app.send_task(
             task_name,
             kwargs=params.__dict__,
         ).id
 
     def get_task_result(self, task_id: str) -> dict:
-        return self.app.AsyncResult(task_id).result
+        return celery_app.AsyncResult(task_id).result

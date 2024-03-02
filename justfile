@@ -7,6 +7,8 @@ compose_files := "-f docker-compose.yml"
 docker_compose := "docker-compose"
 docker_inspect_ip := "docker inspect -f {{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}"
 containers_table_format := "table {{.ID}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}"
+api_port := "8080"
+flower_port := "5555"
 
 
 default:
@@ -53,3 +55,20 @@ echo-ip:
     echo FLOWER_SERVER=$({{docker_inspect_ip}} flower)
     echo RABBITMQ_SERVER=$({{docker_inspect_ip}} rabbitmq)
     echo REDIS_SERVER=$({{docker_inspect_ip}} redis)
+
+api-link:
+    #!/usr/bin/env bash
+    ip=$(echo $({{docker_inspect_ip}} api))
+    echo "http://$ip:{{api_port}}/docs"
+
+
+flower-link:
+    #!/usr/bin/env bash
+    ip=$(echo $({{docker_inspect_ip}} flower))
+    echo "http://$ip:{{flower_port}}"
+    echo "username: flower"
+    echo "password: mysecretflower"
+
+
+test: up
+	docker-compose run --rm --no-deps --entrypoint=pytest api tests/unit tests/integration

@@ -6,5 +6,5 @@ class TaskParams:
 
 
 @dataclass
-class MsgLogger(TaskParams):
-    msg: str
+class UrlShorten(TaskParams):
+    url: str

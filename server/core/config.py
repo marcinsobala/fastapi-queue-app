@@ -18,3 +18,5 @@ REDIS_PORT = os.environ.get("REDIS_PORT")
 
 FLOWER_SERVER = os.environ.get("FLOWER_SERVER")
 FLOWER_BASIC_AUTH = os.environ.get("FLOWER_BASIC_AUTH")
+
+BASE_URL = os.environ.get("BASE_URL")

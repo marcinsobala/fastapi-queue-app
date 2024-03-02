@@ -11,6 +11,10 @@ COPY requirements.txt ./
 RUN pip install -r ./requirements.txt && \
     rm -rf ./requirements.txt
 
+COPY requirements-dev.txt ./
+RUN pip install -r ./requirements-dev.txt && \
+    rm -rf ./requirements-dev.txt
+
 WORKDIR /app
 
 COPY . /app

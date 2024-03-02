@@ -1,15 +1,12 @@
-from adapters.database import create_tables
-from api.routing import global_router
 from fastapi import FastAPI
 from uvicorn import run
+
+from adapters.database import create_tables
+from api.routing import global_router
 
 
 def create_app() -> FastAPI:
     fastapi_app = FastAPI()
-
-    @fastapi_app.get("/")
-    def home() -> str:
-        return "Hello, worlds!"
 
     @fastapi_app.on_event("startup")
     def startup() -> None:
@@ -26,4 +23,5 @@ if __name__ == "__main__":
         "entrypoints.fastapi_app:app",
         host="0.0.0.0",
         port=8080,
+        reload=True,
     )
