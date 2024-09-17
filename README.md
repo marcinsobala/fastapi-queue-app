@@ -38,9 +38,9 @@ Complete list of actions can be viewed after typing `just` in the terminal
 - create virtual environment with python version specified in **server/Dockerfile**
 ```commandline
 pyenv install 3.11.2
-pyenv virtualenv 3.11.2 xberry
-pyenv activate xberry
-pyenv local xberry
+pyenv virtualenv 3.11.2 myproject
+pyenv activate myproject
+pyenv local myproject
 ```
 Last command will create **.python-version** file in the project root, which will
 automatically activate the virtual environment when you navigate to the project root.
